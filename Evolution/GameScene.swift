@@ -45,9 +45,9 @@ extension UIColor {
         var a : CGFloat = 0
         self.getRed(&r, green: &g, blue: &b, alpha: &a)
 
-         return UIColor(red: r + CGFloat.randomRange(-0.05, max: 0.05),
-                        green: g + CGFloat.randomRange(-0.05, max: 0.05),
-                        blue: b + CGFloat.randomRange(-0.05, max: 0.05),
+         return UIColor(red: r + CGFloat.randomRange(-0.01, max: 0.01),
+                        green: g + CGFloat.randomRange(-0.01, max: 0.01),
+                        blue: b + CGFloat.randomRange(-0.01, max: 0.01),
                         alpha: a)
     }
 
@@ -86,15 +86,14 @@ class GameScene: SKScene {
 
     var creatures : [SKShapeNode] = []
 
-    func seed(n : Int = 104) {
+    func seed(n : Int = 28) {
         for i in 0 ..< n {
-            let radius = 20
+            let radius = 40
             let diameter = 2 * radius
             let x = (i * diameter + radius) % Int(self.view!.frame.width)
             let y = (i / (Int(self.view!.frame.width) / diameter) * diameter + radius)
             let creature = SKShapeNode(circleOfRadius: CGFloat(radius - 2))
-            creature.fillColor = UIColor(red: 100, green: 100, blue: 100, alpha: 1)
-            creature.strokeColor = UIColor.blackColor()
+            creature.strokeColor = UIColor.clearColor()
             creature.position = CGPoint(x: x, y: y)
             creature.fillColor = UIColor.random()
             self.creatures.append(creature)
@@ -113,16 +112,14 @@ class GameScene: SKScene {
         /* Called before each frame is rendered */
         var sortedCreatures = self.creatures.sort { [unowned self] in $0.fillColor.distanceToColor(self.backgroundColor) < $1.fillColor.distanceToColor(self.backgroundColor) }
 
-        if sortedCreatures.last!.fillColor.distanceToColor(self.backgroundColor) < 0.1 {
+        if sortedCreatures.last!.fillColor.distanceToColor(self.backgroundColor) < 0.01 {
             self.backgroundColor = UIColor.random()
         }
 
         for _ in 0 ..< self.creatures.count / 20 {
             let removed = sortedCreatures.last!
             sortedCreatures.removeLast()
-
-            let randomIndex = Int(arc4random_uniform(UInt32(sortedCreatures.count)))
-            let copy = sortedCreatures[randomIndex]
+            let copy = sortedCreatures.first!
 
             removed.fillColor = copy.fillColor
         }
